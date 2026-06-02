@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary Key vs Foreign Key - Interactive Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e88e5 0%, #26a69a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.15em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn.quiz-mode {
+            background: linear-gradient(45deg, #ef5350, #c62828);
+        }
+
+        .btn.auto-mode {
+            background: linear-gradient(45deg, #26c6da, #00838f);
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.25);
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ffeb3b, #ffb300);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flashcard {
+            width: 760px;
+            min-height: 460px;
+            height: 520px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.30);
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f5fbff 100%);
+            color: #263238;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #263238 0%, #37474f 100%);
+            color: white;
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            text-align: left;
+            overflow-y: auto;
+        }
+
+        .concept-icon {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 5px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3em;
+        }
+
+        .concept-name {
+            font-size: 2.45em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #1565c0;
+        }
+
+        .concept-subtitle {
+            font-size: 1.15em;
+            color: #607d8b;
+            margin-bottom: 18px;
+            max-width: 650px;
+            line-height: 1.4;
+        }
+
+        .flip-hint {
+            font-size: 1em;
+            color: #78909c;
+            font-style: italic;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .detail-item {
+            background: rgba(255,255,255,0.10);
+            padding: 14px;
+            border-radius: 8px;
+            border-left: 4px solid #4fc3f7;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #80deea;
+            font-size: 0.88em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 1.02em;
+            line-height: 1.35;
+        }
+
+        .description, .example-box, .mistake-box, .fix-box {
+            background: rgba(255,255,255,0.10);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 13px;
+            line-height: 1.5;
+        }
+
+        .example-box {
+            border-left: 4px solid #ffca28;
+        }
+
+        .mistake-box {
+            border-left: 4px solid #ef5350;
+        }
+
+        .fix-box {
+            border-left: 4px solid #66bb6a;
+        }
+
+        .table-wrap {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.96);
+            color: #263238;
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 260px;
+            font-size: 0.92em;
+        }
+
+        th {
+            background: #1565c0;
+            color: white;
+            padding: 8px;
+        }
+
+        td {
+            border: 1px solid #cfd8dc;
+            padding: 7px 9px;
+        }
+
+        .highlight-pk {
+            background: #fff59d;
+            font-weight: bold;
+        }
+
+        .highlight-fk {
+            background: #b2ebf2;
+            font-weight: bold;
+        }
+
+        .bad-value {
+            background: #ffcdd2;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+
+        .good-value {
+            background: #c8e6c9;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #1565c0, #0d47a1);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .card-indicators {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 520px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #fff;
+            transform: scale(1.25);
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .quiz-question {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #263238;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+
+        .quiz-option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .quiz-score {
+            font-size: 1.45em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 820px) {
+            .flashcard {
+                width: 92vw;
+                height: 610px;
+            }
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .concept-name {
+                font-size: 2em;
+            }
+            .navigation {
+                gap: 12px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔑 Primary Key vs Foreign Key</h1>
+            <p>Interactive Flashcards for CIT 180 Database Concepts</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="setMode('study')">📚 Study Mode</button>
+            <button class="btn quiz-mode" onclick="setMode('quiz')">🧠 Quiz Mode</button>
+            <button class="btn auto-mode" onclick="toggleAutoFlip()">⏱️ Auto-Flip</button>
+            <button class="btn" onclick="shuffleCards()">🔀 Shuffle</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="studyMode">
+            <div class="card-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="card-face card-front" id="cardFront"></div>
+                    <div class="card-face card-back" id="cardBack"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quizMode" style="display: none;">
+            <div class="quiz-container" id="quizContainer"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousCard()">← Previous</button>
+            <div class="card-indicators" id="indicators"></div>
+            <button class="nav-btn" onclick="nextCard()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const databaseCards = [
+            {
+                name: "Primary Key",
+                icon: "🔑",
+                subtitle: "A field that uniquely identifies each row in a table.",
+                definition: "A Primary Key is a column, or a combination of columns, that uniquely identifies each record in a table.",
+                rule1: "Each value must be unique.",
+                rule2: "It cannot be NULL.",
+                rule3: "A table usually has one Primary Key.",
+                example: "StudentID is the Primary Key in the Students table because each student has a different StudentID.",
+                commonMistake: "Using a name as a Primary Key. Names can repeat, so they are usually not good Primary Keys.",
+                fix: "Use a unique ID such as StudentID, CourseID, or EnrollID.",
+                color: "#1565c0",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th colspan="3">Students</th></tr>
+                            <tr><td class="highlight-pk">StudentID (PK)</td><td>StudentName</td><td>Major</td></tr>
+                            <tr><td>101</td><td>Ava</td><td>CS</td></tr>
+                            <tr><td>102</td><td>Liam</td><td>IT</td></tr>
+                            <tr><td>103</td><td>Mia</td><td>CIS</td></tr>
+                        </table>
+                    </div>
+                `,
+                quiz: {
+                    question: "Which statement best describes a Primary Key?",
+                    options: [
+                        "A field that uniquely identifies each row in a table",
+                        "A field that can have duplicate values in every row",
+                        "A field that must always store a student's name",
+                        "A field used only to sort records"
+                    ],
+                    correct: 0,
+                    explanation: "A Primary Key uniquely identifies each row in a table and should not be NULL."
+                }
+            },
+            {
+                name: "Foreign Key",
+                icon: "🔗",
+                subtitle: "A field that connects one table to another table.",
+                definition: "A Foreign Key is a column in one table that references the Primary Key in another table.",
+                rule1: "It creates a relationship between tables.",
+                rule2: "Its value should match an existing Primary Key value in the related table.",
+                rule3: "Foreign Key values may repeat because many records can connect to the same parent record.",
+                example: "StudentID in Enrollments is a Foreign Key because it refers to StudentID in Students.",
+                commonMistake: "Thinking the Foreign Key must be unique. It does not have to be unique.",
+                fix: "Allow repeated Foreign Key values when many records belong to one parent record.",
+                color: "#00897b",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th colspan="3">Students</th></tr>
+                            <tr><td class="highlight-pk">StudentID (PK)</td><td>StudentName</td><td>Major</td></tr>
+                            <tr><td>101</td><td>Ava</td><td>CS</td></tr>
+                            <tr><td>102</td><td>Liam</td><td>IT</td></tr>
+                            <tr><td>103</td><td>Mia</td><td>CIS</td></tr>
+                        </table>
+                        <table>
+                            <tr><th colspan="4">Enrollments</th></tr>
+                            <tr><td>EnrollID (PK)</td><td class="highlight-fk">StudentID (FK)</td><td>CourseID</td><td>EnrollDate</td></tr>
+                            <tr><td>1001</td><td>101</td><td>CS101</td><td>6/1</td></tr>
+                            <tr><td>1002</td><td>102</td><td>DB210</td><td>6/2</td></tr>
+                            <tr><td>1003</td><td>101</td><td>IT140</td><td>6/3</td></tr>
+                        </table>
+                    </div>
+                `,
+                quiz: {
+                    question: "In the Enrollments table, StudentID is a Foreign Key because it:",
+                    options: [
+                        "references StudentID in the Students table",
+                        "must be different in every row",
+                        "stores the student's full name",
+                        "removes the need for a Students table"
+                    ],
+                    correct: 0,
+                    explanation: "StudentID in Enrollments references StudentID in Students, which creates the relationship."
+                }
+            },
+            {
+                name: "How Tables Connect",
+                icon: "↔️",
+                subtitle: "Primary Keys and Foreign Keys work together to create relationships.",
+                definition: "The Primary Key is in the parent table. The Foreign Key is in the related child table.",
+                rule1: "Students is the parent table.",
+                rule2: "Enrollments is the child table.",
+                rule3: "StudentID connects the two tables.",
+                example: "One student can have many enrollments. This is a one-to-many relationship.",
+                commonMistake: "Copying student names into the Enrollments table instead of using StudentID.",
+                fix: "Store the student information once in Students, then use StudentID in Enrollments.",
+                color: "#f9a825",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th colspan="2">Students</th></tr>
+                            <tr><td class="highlight-pk">StudentID (PK)</td><td>StudentName</td></tr>
+                            <tr><td>101</td><td>Ava</td></tr>
+                            <tr><td>102</td><td>Liam</td></tr>
+                        </table>
+                        <table>
+                            <tr><th colspan="3">Enrollments</th></tr>
+                            <tr><td>EnrollID (PK)</td><td class="highlight-fk">StudentID (FK)</td><td>CourseID</td></tr>
+                            <tr><td>1001</td><td>101</td><td>CS101</td></tr>
+                            <tr><td>1002</td><td>101</td><td>DB210</td></tr>
+                            <tr><td>1003</td><td>102</td><td>IT140</td></tr>
+                        </table>
+                    </div>
+                    <p><strong>Relationship:</strong> Students.StudentID → Enrollments.StudentID</p>
+                `,
+                quiz: {
+                    question: "What relationship is shown when one student can appear in many enrollment records?",
+                    options: [
+                        "One-to-many relationship",
+                        "One-to-one relationship only",
+                        "No relationship",
+                        "Many-to-many with no bridge table"
+                    ],
+                    correct: 0,
+                    explanation: "One student can have many enrollments, so this is a one-to-many relationship."
+                }
+            },
+            {
+                name: "Common Student Mistake",
+                icon: "⚠️",
+                subtitle: "Using a Foreign Key value that does not exist in the parent table.",
+                definition: "A Foreign Key value should match a Primary Key value in the related table.",
+                rule1: "The child table should not point to a missing parent record.",
+                rule2: "This prevents orphan records.",
+                rule3: "Database relationships should stay consistent.",
+                example: "If StudentID 999 is in Enrollments but not in Students, the record has no matching student.",
+                commonMistake: "Entering StudentID 999 in Enrollments when StudentID 999 does not exist in Students.",
+                fix: "Use an existing StudentID, such as 101, 102, or 103, or add the student to the Students table first.",
+                color: "#c62828",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th colspan="2">Students</th></tr>
+                            <tr><td class="highlight-pk">StudentID (PK)</td><td>StudentName</td></tr>
+                            <tr><td>101</td><td>Ava</td></tr>
+                            <tr><td>102</td><td>Liam</td></tr>
+                            <tr><td>103</td><td>Mia</td></tr>
+                        </table>
+                        <table>
+                            <tr><th colspan="3">Enrollments</th></tr>
+                            <tr><td>EnrollID</td><td class="highlight-fk">StudentID (FK)</td><td>CourseID</td></tr>
+                            <tr><td>1005</td><td class="bad-value">999</td><td>CS101</td></tr>
+                        </table>
+                    </div>
+                    <p><strong>Problem:</strong> StudentID 999 does not exist in the Students table.</p>
+                `,
+                quiz: {
+                    question: "Why is StudentID 999 a problem if it appears in Enrollments but not in Students?",
+                    options: [
+                        "It creates an orphan record with no matching student",
+                        "It makes the Primary Key unique",
+                        "It automatically adds a new student",
+                        "It means the course is full"
+                    ],
+                    correct: 0,
+                    explanation: "A Foreign Key should match an existing Primary Key. If it does not, the child record is orphaned."
+                }
+            },
+            {
+                name: "Fix the Mistake",
+                icon: "✅",
+                subtitle: "Make sure the Foreign Key matches an existing Primary Key.",
+                definition: "To fix a Foreign Key mistake, use a value that already exists in the parent table or add the parent record first.",
+                rule1: "Check the parent table first.",
+                rule2: "Use the correct matching ID.",
+                rule3: "Avoid typing random ID numbers.",
+                example: "Change StudentID 999 to StudentID 102 because 102 exists in the Students table.",
+                commonMistake: "Changing the child table without checking the parent table.",
+                fix: "First verify the correct StudentID in Students, then enter that value in Enrollments.",
+                color: "#2e7d32",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th colspan="2">Students</th></tr>
+                            <tr><td class="highlight-pk">StudentID (PK)</td><td>StudentName</td></tr>
+                            <tr><td>101</td><td>Ava</td></tr>
+                            <tr><td>102</td><td>Liam</td></tr>
+                            <tr><td>103</td><td>Mia</td></tr>
+                        </table>
+                        <table>
+                            <tr><th colspan="3">Enrollments</th></tr>
+                            <tr><td>EnrollID</td><td class="highlight-fk">StudentID (FK)</td><td>CourseID</td></tr>
+                            <tr><td>1005</td><td class="good-value">102</td><td>CS101</td></tr>
+                        </table>
+                    </div>
+                    <p><strong>Fixed:</strong> StudentID 102 exists in Students, so the relationship is valid.</p>
+                `,
+                quiz: {
+                    question: "What is the best fix when a Foreign Key value does not exist in the parent table?",
+                    options: [
+                        "Use a Foreign Key value that matches an existing Primary Key",
+                        "Delete the Primary Key from the parent table",
+                        "Ignore the error",
+                        "Use the student's name instead of an ID"
+                    ],
+                    correct: 0,
+                    explanation: "The Foreign Key should match a valid Primary Key value in the related parent table."
+                }
+            },
+            {
+                name: "Quick Takeaway",
+                icon: "💡",
+                subtitle: "Primary Key identifies. Foreign Key connects.",
+                definition: "Think of a Primary Key as the unique ID card for a row. Think of a Foreign Key as the link that connects one table to another.",
+                rule1: "Primary Key = unique identifier.",
+                rule2: "Foreign Key = relationship connector.",
+                rule3: "Together, they help keep data accurate and organized.",
+                example: "StudentID identifies a student in Students and connects that student to records in Enrollments.",
+                commonMistake: "Confusing the job of each key.",
+                fix: "Ask: Does this field identify a row, or does it connect to another table?",
+                color: "#6a1b9a",
+                tableHtml: `
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th>Key Type</th><th>Main Purpose</th><th>Example</th></tr>
+                            <tr><td class="highlight-pk">Primary Key</td><td>Identifies one row</td><td>Students.StudentID</td></tr>
+                            <tr><td class="highlight-fk">Foreign Key</td><td>Connects tables</td><td>Enrollments.StudentID</td></tr>
+                        </table>
+                    </div>
+                `,
+                quiz: {
+                    question: "Which takeaway is correct?",
+                    options: [
+                        "Primary Key identifies a row; Foreign Key connects tables",
+                        "Primary Key connects tables; Foreign Key identifies every row",
+                        "Both keys must always be unique",
+                        "Foreign Keys are not used in relational databases"
+                    ],
+                    correct: 0,
+                    explanation: "A Primary Key uniquely identifies a row. A Foreign Key creates a relationship between tables."
+                }
+            }
+        ];
+
+        let currentCardIndex = 0;
+        let currentMode = 'study';
+        let isFlipped = false;
+        let autoFlipInterval = null;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        function updateCard() {
+            const card = databaseCards[currentCardIndex];
+            const frontCard = document.getElementById('cardFront');
+            const backCard = document.getElementById('cardBack');
+
+            frontCard.innerHTML = `
+                <div class="concept-icon" style="background: ${card.color}; color: white;">${card.icon}</div>
+                <div class="concept-name">${card.name}</div>
+                <div class="concept-subtitle">${card.subtitle}</div>
+                <div class="flip-hint">Click the card to flip and study the example</div>
+            `;
+
+            backCard.innerHTML = `
+                <div class="layer-details">
+                    <h2 style="color: #80deea; margin-bottom: 18px; text-align: center;">${card.name}</h2>
+                    <div class="description">
+                        <strong>Definition:</strong> ${card.definition}
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Rule 1</div>
+                            <div class="detail-value">${card.rule1}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Rule 2</div>
+                            <div class="detail-value">${card.rule2}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Rule 3</div>
+                            <div class="detail-value">${card.rule3}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Example</div>
+                            <div class="detail-value">${card.example}</div>
+                        </div>
+                    </div>
+                    <div class="example-box">
+                        <strong>Table Example:</strong>
+                        ${card.tableHtml}
+                    </div>
+                    <div class="mistake-box">
+                        <strong>Common Student Mistake:</strong> ${card.commonMistake}
+                    </div>
+                    <div class="fix-box">
+                        <strong>How to Fix It:</strong> ${card.fix}
+                    </div>
+                </div>
+            `;
+
+            updateProgress();
+            updateIndicators();
+            resetFlip();
+        }
+
+        function updateQuiz() {
+            const card = databaseCards[currentCardIndex];
+            const quizContainer = document.getElementById('quizContainer');
+
+            quizContainer.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div class="concept-icon" style="background: ${card.color}; color: white; margin: 0 auto;">${card.icon}</div>
+                    <h2 style="margin: 15px 0; color: #263238;">${card.name}</h2>
+                </div>
+                <div class="quiz-question">${card.quiz.question}</div>
+                <div class="quiz-options" id="quizOptions">
+                    ${card.quiz.options.map((option, index) => `
+                        <div class="quiz-option" onclick="selectAnswer(${index})" data-index="${index}">
+                            ${option}
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="quizResult" style="display: none;"></div>
+            `;
+
+            quizAnswered = false;
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (quizAnswered) return;
+
+            const card = databaseCards[currentCardIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            const resultDiv = document.getElementById('quizResult');
+
+            quizAnswered = true;
+
+            options.forEach((option, index) => {
+                option.style.pointerEvents = 'none';
+                if (index === card.quiz.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    option.classList.add('incorrect');
+                }
+            });
+
+            const isCorrect = selectedIndex === card.quiz.correct;
+            if (isCorrect) quizScore++;
+
+            resultDiv.innerHTML = `
+                <div class="quiz-result" style="background: ${isCorrect ? '#d4edda' : '#f8d7da'}; color: ${isCorrect ? '#155724' : '#721c24'};">
+                    <div class="quiz-score">${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</div>
+                    <div style="margin: 15px 0;"><strong>Explanation:</strong> ${card.quiz.explanation}</div>
+                    <div style="font-size: 0.9em; margin-top: 15px;">Score: ${quizScore}/${currentCardIndex + 1}</div>
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+        }
+
+        function flipCard() {
+            if (currentMode !== 'study') return;
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function resetFlip() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % databaseCards.length;
+            if (currentMode === 'study') {
+                updateCard();
+            } else {
+                updateQuiz();
+            }
+        }
+
+        function previousCard() {
+            currentCardIndex = (currentCardIndex - 1 + databaseCards.length) % databaseCards.length;
+            if (currentMode === 'study') {
+                updateCard();
+            } else {
+                updateQuiz();
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            const studyMode = document.getElementById('studyMode');
+            const quizMode = document.getElementById('quizMode');
+
+            if (mode === 'study') {
+                studyMode.style.display = 'block';
+                quizMode.style.display = 'none';
+                updateCard();
+            } else {
+                studyMode.style.display = 'none';
+                quizMode.style.display = 'block';
+                quizScore = 0;
+                currentCardIndex = 0;
+                updateQuiz();
+            }
+        }
+
+        function toggleAutoFlip() {
+            if (autoFlipInterval) {
+                clearInterval(autoFlipInterval);
+                autoFlipInterval = null;
+            } else {
+                autoFlipInterval = setInterval(() => {
+                    if (currentMode === 'study') {
+                        flipCard();
+                        setTimeout(() => {
+                            nextCard();
+                        }, 3000);
+                    }
+                }, 6000);
+            }
+        }
+
+        function shuffleCards() {
+            for (let i = databaseCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [databaseCards[i], databaseCards[j]] = [databaseCards[j], databaseCards[i]];
+            }
+            currentCardIndex = 0;
+            if (currentMode === 'study') {
+                updateCard();
+            } else {
+                quizScore = 0;
+                updateQuiz();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentCardIndex + 1) / databaseCards.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateIndicators() {
+            const indicatorsContainer = document.getElementById('indicators');
+            indicatorsContainer.innerHTML = databaseCards.map((_, index) => 
+                `<div class="indicator ${index === currentCardIndex ? 'active' : ''}" onclick="goToCard(${index})"></div>`
+            ).join('');
+        }
+
+        function goToCard(index) {
+            currentCardIndex = index;
+            if (currentMode === 'study') {
+                updateCard();
+            } else {
+                updateQuiz();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    previousCard();
+                    break;
+                case 'ArrowRight':
+                    nextCard();
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    if (currentMode === 'study') flipCard();
+                    break;
+                case 's':
+                    setMode('study');
+                    break;
+                case 'q':
+                    setMode('quiz');
+                    break;
+            }
+        });
+
+        updateCard();
+    </script>
+</body>
+</html>
