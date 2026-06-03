@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Loops Interactive Academy - Master Java Programming</title>
+    <!-- Tailwind CSS for high-quality, modern, fluid responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f4fe',
+                            100: '#dbeafe',
+                            600: '#1d4ed8',
+                            700: '#1d4ed8', // Accessible blue
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        success: {
+                            700: '#15803d', // High contrast green
+                        },
+                        warning: {
+                            700: '#b45309', // High contrast orange
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'system-ui', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Accessible Focus Outline */
+        *:focus-visible {
+            outline: 4px solid #f59e0b !important;
+            outline-offset: 2px !important;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Screen reader only utility class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans leading-relaxed min-h-screen flex flex-col">
+
+    <!-- Skip to Content Link for Screen Readers and Keyboard Users -->
+    <a href="#main-content" class="absolute top-[-100px] left-4 bg-brand-700 text-white px-4 py-2 rounded-md z-50 focus:top-4 transition-all duration-200">
+        Skip to main content
+    </a>
+
+    <!-- Top Accessible Navigation Header -->
+    <header class="bg-brand-900 text-white shadow-md border-b-4 border-brand-700" role="banner">
+        <div class="max-w-6xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-brand-700 rounded-lg" aria-hidden="true">
+                    <!-- Java Brand SVG Cup Icon -->
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight">Java Loops Academy</h1>
+                    <p class="text-xs text-brand-100">Step-by-Step Interactive Learning for Absolute Beginners</p>
+                </div>
+            </div>
+
+            <!-- Global Progress Tracker -->
+            <div class="w-full md:w-64 bg-brand-800 p-3 rounded-lg border border-brand-600" aria-label="Course Progress">
+                <div class="flex justify-between text-xs font-semibold text-brand-100 mb-1">
+                    <span>Overall Progress</span>
+                    <span id="progress-percent">0% Completed</span>
+                </div>
+                <div class="w-full bg-brand-950 h-3 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-amber-500 h-full w-0 transition-all duration-500" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Interactive Navigation Tabs -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm" aria-label="Lesson Modules">
+        <div class="max-w-6xl mx-auto px-2 overflow-x-auto flex whitespace-nowrap">
+            <button onclick="switchTab('intro')" id="tab-intro" class="px-4 py-4 border-b-4 border-brand-700 text-brand-700 font-bold text-sm focus:outline-none flex items-center gap-2" role="tab" aria-selected="true" aria-controls="panel-intro">
+                🌟 1. Intro to Loops
+            </button>
+            <button onclick="switchTab('for')" id="tab-for" class="px-4 py-4 border-b-4 border-transparent text-gray-600 hover:text-brand-700 hover:border-brand-100 font-medium text-sm focus:outline-none flex items-center gap-2" role="tab" aria-selected="false" aria-controls="panel-for">
+                🔁 2. For Loops
+            </button>
+            <button onclick="switchTab('while')" id="tab-while" class="px-4 py-4 border-b-4 border-transparent text-gray-600 hover:text-brand-700 hover:border-brand-100 font-medium text-sm focus:outline-none flex items-center gap-2" role="tab" aria-selected="false" aria-controls="panel-while">
+                🔄 3. While Loops
+            </button>
+            <button onclick="switchTab('dowhile')" id="tab-dowhile" class="px-4 py-4 border-b-4 border-transparent text-gray-600 hover:text-brand-700 hover:border-brand-100 font-medium text-sm focus:outline-none flex items-center gap-2" role="tab" aria-selected="false" aria-controls="panel-dowhile">
+                ↩️ 4. Do-While Loops
+            </button>
+            <button onclick="switchTab('sandbox')" id="tab-sandbox" class="px-4 py-4 border-b-4 border-transparent text-gray-600 hover:text-brand-700 hover:border-brand-100 font-medium text-sm focus:outline-none flex items-center gap-2" role="tab" aria-selected="false" aria-controls="panel-sandbox">
+                🎮 5. Code Builder Sandbox
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main id="main-content" class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 focus:outline-none" tabindex="-1">
+        
+        <!-- Screen Reader Announcement Panel (Aria Live) -->
+        <div id="sr-announcer" class="sr-only" aria-live="assertive"></div>
+
+        <!-- MODULE 1: INTRODUCTION TO LOOPS -->
+        <section id="panel-intro" class="tab-panel block" role="tabpanel" aria-labelledby="tab-intro">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Explanatory Content -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Module 1: The Core Concept</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">What is a Loop and Why Do We Need Them?</h2>
+                        
+                        <p class="text-gray-700 text-lg mb-6">
+                            Imagine you are asked to write a program that prints <code class="bg-gray-100 px-1 py-0.5 rounded text-red-600 font-semibold font-mono">"Java is Awesome!"</code> 
+                            exactly <strong class="text-black">100 times</strong>. 
+                        </p>
+                        
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-6">
+                            <h3 class="font-bold text-red-900 flex items-center gap-2">
+                                ❌ The Tedious Way (No Loops)
+                            </h3>
+                            <p class="text-sm text-red-800 mt-1">
+                                You would have to write <code class="font-mono bg-white px-1">System.out.println("Java is Awesome!");</code> 100 times manually! 
+                                Your code would be massive, hard to read, and incredibly exhausting to change.
+                            </p>
+                        </div>
+
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg mb-6">
+                            <h3 class="font-bold text-success-700 flex items-center gap-2">
+                                ✅ The Smart Way (Using a Loop!)
+                            </h3>
+                            <p class="text-sm text-emerald-800 mt-1">
+                                You write the print command <strong class="text-emerald-950">just once</strong> and instruct Java to repeat it 100 times. 
+                                That is the magic power of loops!
+                            </p>
+                        </div>
+
+                        <!-- Real World Analogy -->
+                        <div class="border-t border-gray-200 pt-6 mt-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                🎡 Real-World Analogy: The Rollercoaster Ride
+                            </h3>
+                            <p class="text-gray-700">
+                                Think of a loop like a rollercoaster set to run 3 times:
+                            </p>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700 mt-3 pl-2">
+                                <li><strong>The Setup (Initialization):</strong> You start at Lap 1.</li>
+                                <li><strong>The Test (Condition Check):</strong> Are we under or equal to lap 3? If yes, keep riding!</li>
+                                <li><strong>The Action (Execution):</strong> You complete the rollercoaster lap!</li>
+                                <li><strong>The Update:</strong> You increment your lap count (+1) and test again.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Analogy Visualizer Sidebar -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">Live Analogy: The Loop Ride</h3>
+                        <p class="text-xs text-gray-600 mb-4">Click below to see how Java evaluates a real-world loop condition in real-time.</p>
+                        
+                        <!-- Visual Container -->
+                        <div class="bg-slate-900 rounded-xl p-4 flex flex-col items-center justify-center text-white relative min-h-[180px]">
+                            <!-- Cart Visual -->
+                            <div id="analogy-cart" class="text-4xl transition-all duration-500 transform translate-y-0" aria-live="polite">
+                                🎢 🛒
+                            </div>
+                            <div class="mt-4 text-center">
+                                <span id="analogy-status" class="block font-mono text-amber-400 font-bold text-sm">Status: Not Started</span>
+                                <span id="analogy-lap" class="block text-xs text-slate-300 mt-1">Laps Completed: 0 / 3</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Controls -->
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="stepAnalogy()" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition-colors" id="btn-step-analogy">
+                                Ride 1 Lap
+                            </button>
+                            <button onclick="resetAnalogy()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-3 rounded-xl text-sm transition-colors" aria-label="Reset Analogy Simulation">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Intro Knowledge Check -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">🎯 Quick Check</h3>
+                        <p class="text-sm text-gray-700 mb-4">What are the three essential components every loop must manage to prevent running forever?</p>
+                        <div class="space-y-2">
+                            <button onclick="checkIntroQuiz(false, this)" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-brand-700 hover:bg-brand-50 text-xs font-medium transition-all focus:ring-2 focus:ring-amber-500">
+                                A) Printing statements, using math, and ending the script
+                            </button>
+                            <button onclick="checkIntroQuiz(true, this)" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-brand-700 hover:bg-brand-50 text-xs font-medium transition-all focus:ring-2 focus:ring-amber-500">
+                                B) Starting condition, check test, and update step
+                            </button>
+                        </div>
+                        <div id="intro-quiz-feedback" class="mt-3 text-sm hidden" aria-live="polite"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom Navigation -->
+            <div class="mt-8 flex justify-end">
+                <button onclick="switchTab('for')" class="bg-brand-700 hover:bg-brand-800 text-white font-black px-6 py-3 rounded-xl shadow-md text-base transition-colors flex items-center gap-2">
+                    Let's Master "For Loops" next! ➡️
+                </button>
+            </div>
+        </section>
+
+
+        <!-- MODULE 2: FOR LOOPS -->
+        <section id="panel-for" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-for">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Explanation and code layout -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Module 2: The Precise Repeater</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">The Java "for" Loop</h2>
+                        
+                        <p class="text-gray-700 mb-4 text-base">
+                            The <strong class="text-brand-900">for loop</strong> is used when you know <strong>exactly how many times</strong> you want to execute a block of code. It groups all three essential controls (start, condition, update) in a single line.
+                        </p>
+
+                        <!-- Code block anatomy with clear annotations -->
+                        <div class="bg-slate-900 text-slate-100 p-4 md:p-6 rounded-xl font-mono text-sm shadow-inner relative overflow-x-auto">
+                            <span class="absolute top-2 right-2 bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded">Java Syntax</span>
+                            <div class="space-y-1">
+                                <div><span class="text-pink-400">for</span> (<span class="text-sky-400">int</span> i = <span class="text-amber-300">1</span>; <span class="text-emerald-400">i &lt;= 3</span>; <span class="text-purple-400">i++</span>) {</div>
+                                <div class="pl-6 text-slate-400">// This runs repeated action</div>
+                                <div class="pl-6">System.out.println(<span class="text-green-300">"Loop: " + i</span>);</div>
+                                <div>}</div>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown explanation cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+                            <div class="bg-sky-50 border-t-4 border-sky-400 p-3 rounded-b">
+                                <span class="font-bold text-sky-900 text-xs block uppercase">1. Start (Initialization)</span>
+                                <code class="font-mono text-xs text-sky-800 bg-white px-1">int i = 1;</code>
+                                <p class="text-xs text-sky-900 mt-1">Creates variable <code class="font-semibold">i</code> and starts it at 1.</p>
+                            </div>
+                            <div class="bg-emerald-50 border-t-4 border-emerald-400 p-3 rounded-b">
+                                <span class="font-bold text-emerald-900 text-xs block uppercase">2. Test (Condition)</span>
+                                <code class="font-mono text-xs text-emerald-800 bg-white px-1">i &lt;= 3;</code>
+                                <p class="text-xs text-emerald-900 mt-1">If true, run the loop. If false, stop.</p>
+                            </div>
+                            <div class="bg-purple-50 border-t-4 border-purple-400 p-3 rounded-b">
+                                <span class="font-bold text-purple-900 text-xs block uppercase">3. Update (Increment)</span>
+                                <code class="font-mono text-xs text-purple-800 bg-white px-1">i++</code>
+                                <p class="text-xs text-purple-900 mt-1">Increases <code class="font-semibold">i</code> by 1 after each loop lap.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- mini quiz specifically for "for" -->
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">⚡ Check Your Understanding</h3>
+                        <p class="text-gray-700 mb-4 text-sm">If we start at <code class="font-mono bg-gray-100 px-1 text-red-600">int i = 0;</code> and condition is <code class="font-mono bg-gray-100 px-1 text-red-600">i < 5</code>, how many times will the loop run?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <button onclick="checkForQuiz(false, 4, this)" class="p-3 border border-gray-200 hover:border-brand-700 rounded-xl font-bold text-sm text-center transition-all bg-white hover:bg-brand-50">4 times</button>
+                            <button onclick="checkForQuiz(true, 5, this)" class="p-3 border border-gray-200 hover:border-brand-700 rounded-xl font-bold text-sm text-center transition-all bg-white hover:bg-brand-50">5 times</button>
+                            <button onclick="checkForQuiz(false, 6, this)" class="p-3 border border-gray-200 hover:border-brand-700 rounded-xl font-bold text-sm text-center transition-all bg-white hover:bg-brand-50">6 times</button>
+                        </div>
+                        <div id="for-quiz-feedback" class="mt-4 p-3 rounded-lg hidden text-sm font-semibold" aria-live="polite"></div>
+                    </div>
+                </div>
+
+                <!-- Live Visual Code Tracer Panel -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1">🔍 Live "For Loop" Step Tracer</h3>
+                        <p class="text-xs text-gray-600 mb-4">Click "Step" to run each stage. Watch variable assignments and visual program flow in real-time.</p>
+                        
+                        <!-- Visual representation of code executing -->
+                        <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md text-slate-100">
+                            <!-- Code block header -->
+                            <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 text-xs font-mono text-slate-400">
+                                Executing Line Tracer
+                            </div>
+                            <!-- Live Highlighting Code Lines -->
+                            <div class="p-4 font-mono text-sm leading-6 space-y-1">
+                                <div id="for-line-1" class="px-2 py-0.5 rounded transition-all duration-300">1: <span class="text-pink-400">for</span> (<span class="text-sky-400">int i = 1</span>; <span class="text-emerald-400">i &lt;= 3</span>; <span class="text-purple-400">i++</span>) {</div>
+                                <div id="for-line-2" class="px-2 py-0.5 rounded transition-all duration-300 pl-6">2: System.out.println(<span class="text-green-300">"Run: " + i</span>);</div>
+                                <div id="for-line-3" class="px-2 py-0.5 rounded transition-all duration-300">3: }</div>
+                            </div>
+                        </div>
+
+                        <!-- Variables State Table -->
+                        <div class="mt-4 border border-gray-100 rounded-xl p-4 bg-gray-50">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Internal Computer Memory (Variables)</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm font-mono">
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Variable <strong class="text-blue-700">i</strong></span>
+                                    <span id="var-for-i" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Condition <strong class="text-emerald-700">i &lt;= 3</strong></span>
+                                    <span id="var-for-cond" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Monitor Console -->
+                        <div class="mt-4">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Simulated Output Console</h4>
+                            <div id="for-console" class="bg-black text-emerald-400 p-3 rounded-lg font-mono text-xs min-h-[80px] border border-slate-800" aria-live="polite">
+                                Console empty. Click "Step Forward" below.
+                            </div>
+                        </div>
+
+                        <!-- Step controls -->
+                        <div class="mt-5 flex gap-2">
+                            <button onclick="stepForLoop()" class="flex-grow bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 px-4 rounded-xl shadow-sm text-sm transition-colors flex justify-center items-center gap-2">
+                                👣 Step Forward
+                            </button>
+                            <button onclick="resetForLoop()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl text-sm transition-colors" aria-label="Reset For Loop Simulation">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation footer -->
+            <div class="mt-8 flex justify-between">
+                <button onclick="switchTab('intro')" class="text-brand-700 font-bold hover:underline px-4 py-2">
+                    ⬅️ Go Back to Intro
+                </button>
+                <button onclick="switchTab('while')" class="bg-brand-700 hover:bg-brand-800 text-white font-black px-6 py-3 rounded-xl shadow-md text-base transition-colors">
+                    Move to While Loops ➡️
+                </button>
+            </div>
+        </section>
+
+
+        <!-- MODULE 3: WHILE LOOPS -->
+        <section id="panel-while" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-while">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Explanatory text -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Module 3: The Conditional Runner</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">The Java "while" Loop</h2>
+                        
+                        <p class="text-gray-700 mb-4 text-base">
+                            The <strong class="text-brand-900">while loop</strong> acts like a repeated <code class="bg-gray-100 px-1 rounded text-red-600 font-mono font-semibold">if</code> statement. It repeatedly executes code <strong>as long as a specific condition remains true</strong>. Use this when you do not know exactly how many loops it will take beforehand!
+                        </p>
+
+                        <!-- Real world analogy -->
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6 text-sm">
+                            <strong class="text-amber-900 block font-bold">🧼 Real-World Analogy: Washing Dirty Dishes</strong>
+                            <span class="text-amber-800">
+                                As long as the sink has dishes (<code class="bg-white font-mono px-1">while (dishesInSink &gt; 0)</code>), you keep washing dishes. You don't always know exactly how many dishes are there, but you stop when they're all done!
+                            </span>
+                        </div>
+
+                        <!-- Syntax block -->
+                        <div class="bg-slate-900 text-slate-100 p-4 md:p-6 rounded-xl font-mono text-sm shadow-inner relative overflow-x-auto">
+                            <span class="absolute top-2 right-2 bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded">Java Syntax</span>
+                            <div class="space-y-1">
+                                <div><span class="text-sky-400">int</span> energy = <span class="text-amber-300">3</span>; <span class="text-slate-400">// Initialization</span></div>
+                                <div><span class="text-pink-400">while</span> (<span class="text-emerald-400">energy &gt; 0</span>) { <span class="text-slate-400">// Condition</span></div>
+                                <div class="pl-6">System.out.println(<span class="text-green-300">"Running!"</span>);</div>
+                                <div class="pl-6 text-purple-400">energy--; <span class="text-slate-400">// Update Step (Crucial!)</span></div>
+                                <div>}</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mt-4 text-sm">
+                            <strong class="text-red-900 block font-bold">⚠️ Warning: The Infinite Loop Danger!</strong>
+                            <span class="text-red-800">
+                                If you forget to update the variable in the loop (like <code class="font-mono bg-white">energy--</code>), the test will stay true forever, causing the program to freeze or crash!
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Mini Quiz on While Loops -->
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">⚡ Check Your Understanding</h3>
+                        <p class="text-gray-700 mb-4 text-sm">What will happen if you run a loop with the condition <code class="font-mono bg-gray-100 text-red-600">while(true)</code> and there's no way to break out of it?</p>
+                        <div class="space-y-2">
+                            <button onclick="checkWhileQuiz(false, this)" class="w-full text-left p-3 border border-gray-200 hover:border-brand-700 rounded-xl text-sm transition-all bg-white hover:bg-brand-50">
+                                A) The program will compile safely but ask the user to input a stopping number.
+                            </button>
+                            <button onclick="checkWhileQuiz(true, this)" class="w-full text-left p-3 border border-gray-200 hover:border-brand-700 rounded-xl text-sm transition-all bg-white hover:bg-brand-50">
+                                B) The program will run forever (an infinite loop), potentially locking up or crashing the system.
+                            </button>
+                        </div>
+                        <div id="while-quiz-feedback" class="mt-4 p-3 rounded-lg hidden text-sm font-semibold" aria-live="polite"></div>
+                    </div>
+                </div>
+
+                <!-- Code step tracer sidebar -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1">🔍 Live "While Loop" Step Tracer</h3>
+                        <p class="text-xs text-gray-600 mb-4">Click "Step" to follow variable changes and console outputs line-by-line.</p>
+                        
+                        <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md text-slate-100">
+                            <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 text-xs font-mono text-slate-400">
+                                Executing Line Tracer
+                            </div>
+                            <div class="p-4 font-mono text-sm leading-6 space-y-1">
+                                <div id="while-line-1" class="px-2 py-0.5 rounded transition-all duration-300">1: <span class="text-sky-400">int</span> energy = <span class="text-amber-300">3</span>;</div>
+                                <div id="while-line-2" class="px-2 py-0.5 rounded transition-all duration-300">2: <span class="text-pink-400">while</span> (<span class="text-emerald-400">energy &gt; 0</span>) {</div>
+                                <div id="while-line-3" class="px-2 py-0.5 rounded transition-all duration-300 pl-6">3: System.out.println(<span class="text-green-300">"Running!"</span>);</div>
+                                <div id="while-line-4" class="px-2 py-0.5 rounded transition-all duration-300 pl-6">4: <span class="text-purple-400">energy--</span>;</div>
+                                <div id="while-line-5" class="px-2 py-0.5 rounded transition-all duration-300">5: }</div>
+                            </div>
+                        </div>
+
+                        <!-- Memory visualization -->
+                        <div class="mt-4 border border-gray-100 rounded-xl p-4 bg-gray-50">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Internal Computer Memory (Variables)</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm font-mono">
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Variable <strong class="text-blue-700">energy</strong></span>
+                                    <span id="var-while-energy" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Condition <strong class="text-emerald-700">energy &gt; 0</strong></span>
+                                    <span id="var-while-cond" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Console Output -->
+                        <div class="mt-4">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Simulated Output Console</h4>
+                            <div id="while-console" class="bg-black text-emerald-400 p-3 rounded-lg font-mono text-xs min-h-[80px] border border-slate-800" aria-live="polite">
+                                Console empty. Click "Step Forward" below.
+                            </div>
+                        </div>
+
+                        <!-- Step controls -->
+                        <div class="mt-5 flex gap-2">
+                            <button onclick="stepWhileLoop()" class="flex-grow bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 px-4 rounded-xl shadow-sm text-sm transition-colors flex justify-center items-center gap-2">
+                                👣 Step Forward
+                            </button>
+                            <button onclick="resetWhileLoop()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl text-sm transition-colors" aria-label="Reset While Loop Simulation">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation footer -->
+            <div class="mt-8 flex justify-between">
+                <button onclick="switchTab('for')" class="text-brand-700 font-bold hover:underline px-4 py-2">
+                    ⬅️ Go Back to For Loops
+                </button>
+                <button onclick="switchTab('dowhile')" class="bg-brand-700 hover:bg-brand-800 text-white font-black px-6 py-3 rounded-xl shadow-md text-base transition-colors">
+                    Move to Do-While Loops ➡️
+                </button>
+            </div>
+        </section>
+
+
+        <!-- MODULE 4: DO-WHILE LOOPS -->
+        <section id="panel-dowhile" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-dowhile">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Content panel -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Module 4: The Guaranteed Executer</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">The Java "do-while" Loop</h2>
+                        
+                        <p class="text-gray-700 mb-4 text-base">
+                            The <strong class="text-brand-900 font-bold">do-while loop</strong> is a unique variation of the while loop. Its golden rule is: <strong>Execute the code block first, then check the condition.</strong>
+                        </p>
+
+                        <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg mb-6 text-sm">
+                            <strong class="text-sky-950 block font-bold">🎯 The Do-While Guarantee:</strong>
+                            <span class="text-sky-800">
+                                Because the condition check is at the <strong>very bottom</strong> of the structure, a do-while loop is guaranteed to run <strong>at least once</strong>, even if the condition is false from the start!
+                            </span>
+                        </div>
+
+                        <!-- Java Code block -->
+                        <div class="bg-slate-900 text-slate-100 p-4 md:p-6 rounded-xl font-mono text-sm shadow-inner relative overflow-x-auto">
+                            <span class="absolute top-2 right-2 bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded">Java Syntax</span>
+                            <div class="space-y-1">
+                                <div><span class="text-sky-400">int</span> attempts = <span class="text-amber-300">0</span>;</div>
+                                <div><span class="text-pink-400">do</span> {</div>
+                                <div class="pl-6">System.out.println(<span class="text-green-300">"Guaranteed Print!"</span>);</div>
+                                <div class="pl-6 text-purple-400">attempts++;</div>
+                                <div>} <span class="text-pink-400">while</span> (<span class="text-emerald-400">attempts &lt; 0</span>); <span class="text-slate-400">// False on start!</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison table -->
+                        <div class="mt-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-3">Comparing While vs. Do-While</h3>
+                            <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-slate-800 font-bold border-b border-gray-200">
+                                            <th class="p-3">Feature</th>
+                                            <th class="p-3">while loop</th>
+                                            <th class="p-3">do-while loop</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 text-gray-700">
+                                        <tr>
+                                            <td class="p-3 font-semibold">Test Position</td>
+                                            <td class="p-3">Top (Before entering loop)</td>
+                                            <td class="p-3">Bottom (After executing loop once)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3 font-semibold">Minimum runs</td>
+                                            <td class="p-3"><strong>0 times</strong> (if condition is false)</td>
+                                            <td class="p-3"><strong>1 time</strong> (always!)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Do While Quiz -->
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">⚡ Check Your Understanding</h3>
+                        <p class="text-gray-700 mb-4 text-sm">Why is a do-while loop always run at least once even if the condition is false?</p>
+                        <div class="space-y-2">
+                            <button onclick="checkDoWhileQuiz(true, this)" class="w-full text-left p-3 border border-gray-200 hover:border-brand-700 rounded-xl text-sm transition-all bg-white hover:bg-brand-50">
+                                A) Because the test condition is positioned at the end of the loop structure instead of the start.
+                            </button>
+                            <button onclick="checkDoWhileQuiz(false, this)" class="w-full text-left p-3 border border-gray-200 hover:border-brand-700 rounded-xl text-sm transition-all bg-white hover:bg-brand-50">
+                                B) Because Java compilers have a bug that runs conditions late.
+                            </button>
+                        </div>
+                        <div id="dowhile-quiz-feedback" class="mt-4 p-3 rounded-lg hidden text-sm font-semibold" aria-live="polite"></div>
+                    </div>
+                </div>
+
+                <!-- Code step tracer sidebar -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1">🔍 Live "Do-While" Step Tracer</h3>
+                        <p class="text-xs text-gray-600 mb-4">Observe how this loop behaves even when initialized with a false condition.</p>
+                        
+                        <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md text-slate-100">
+                            <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 text-xs font-mono text-slate-400">
+                                Executing Line Tracer
+                            </div>
+                            <div class="p-4 font-mono text-sm leading-6 space-y-1">
+                                <div id="dowhile-line-1" class="px-2 py-0.5 rounded transition-all duration-300">1: <span class="text-sky-400">int</span> attempts = <span class="text-amber-300">0</span>;</div>
+                                <div id="dowhile-line-2" class="px-2 py-0.5 rounded transition-all duration-300">2: <span class="text-pink-400">do</span> {</div>
+                                <div id="dowhile-line-3" class="px-2 py-0.5 rounded transition-all duration-300 pl-6">3: System.out.println(<span class="text-green-300">"Guaranteed Print!"</span>);</div>
+                                <div id="dowhile-line-4" class="px-2 py-0.5 rounded transition-all duration-300 pl-6">4: <span class="text-purple-400">attempts++</span>;</div>
+                                <div id="dowhile-line-5" class="px-2 py-0.5 rounded transition-all duration-300">5: } <span class="text-pink-400">while</span> (<span class="text-emerald-400">attempts &lt; 0</span>);</div>
+                            </div>
+                        </div>
+
+                        <!-- Variables Table -->
+                        <div class="mt-4 border border-gray-100 rounded-xl p-4 bg-gray-50">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Internal Computer Memory (Variables)</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm font-mono">
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Variable <strong class="text-blue-700">attempts</strong></span>
+                                    <span id="var-dowhile-attempts" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-gray-200">
+                                    <span class="text-gray-500 text-xs block">Condition <strong class="text-emerald-700">attempts &lt; 0</strong></span>
+                                    <span id="var-dowhile-cond" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Console Output -->
+                        <div class="mt-4">
+                            <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Simulated Output Console</h4>
+                            <div id="dowhile-console" class="bg-black text-emerald-400 p-3 rounded-lg font-mono text-xs min-h-[80px] border border-slate-800" aria-live="polite">
+                                Console empty. Click "Step Forward" below.
+                            </div>
+                        </div>
+
+                        <!-- Step controls -->
+                        <div class="mt-5 flex gap-2">
+                            <button onclick="stepDoWhileLoop()" class="flex-grow bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 px-4 rounded-xl shadow-sm text-sm transition-colors flex justify-center items-center gap-2">
+                                👣 Step Forward
+                            </button>
+                            <button onclick="resetDoWhileLoop()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl text-sm transition-colors" aria-label="Reset Do While Loop Simulation">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation footer -->
+            <div class="mt-8 flex justify-between">
+                <button onclick="switchTab('while')" class="text-brand-700 font-bold hover:underline px-4 py-2">
+                    ⬅️ Go Back to While Loops
+                </button>
+                <button onclick="switchTab('sandbox')" class="bg-brand-700 hover:bg-brand-800 text-white font-black px-6 py-3 rounded-xl shadow-md text-base transition-colors">
+                    Build Code in Sandbox! ➡️
+                </button>
+            </div>
+        </section>
+
+
+        <!-- MODULE 5: INTERACTIVE SANDBOX & CODE BUILDER -->
+        <section id="panel-sandbox" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-sandbox">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Code puzzle game block -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+                    <div>
+                        <span class="inline-block bg-brand-100 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">Interactive Challenge</span>
+                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">The Puzzle: Print "1 3 5"</h2>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Arrange the code block lines below in the correct logical sequence so it counts and prints odd numbers <code class="font-mono bg-gray-100 p-0.5">"1 3 5"</code>.
+                        </p>
+                    </div>
+
+                    <!-- List of components to sort with keyboard control accessibility -->
+                    <div class="space-y-2 border border-dashed border-gray-300 p-4 rounded-xl bg-gray-50" aria-label="Interactive Code Order Challenge">
+                        <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Instructions: Select a block and click UP or DOWN button to order them properly.</span>
+                        
+                        <div id="puzzle-container" class="space-y-2">
+                            <!-- JS Dynamically injects highly accessible puzzle blocks -->
+                        </div>
+                    </div>
+
+                    <!-- Puzzle Controls -->
+                    <div class="flex gap-2">
+                        <button onclick="checkPuzzle()" class="flex-grow bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 px-4 rounded-xl shadow-sm text-sm transition-colors flex justify-center items-center gap-2">
+                            🚀 Test My Block Code
+                        </button>
+                        <button onclick="resetPuzzle()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl text-sm transition-colors">
+                            Reset Block Code
+                        </button>
+                    </div>
+
+                    <!-- Puzzle Feedback Box (Aria Live) -->
+                    <div id="puzzle-feedback" class="p-4 rounded-xl hidden text-sm" aria-live="polite"></div>
+                </div>
+
+                <!-- Custom Parameters Code Sandbox -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+                    <div>
+                        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">Sandbox Lab</span>
+                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Interactive Code Experiment</h2>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Modify variables using the knobs below to see instantly how a loop's logic adapts dynamically.
+                        </p>
+                    </div>
+
+                    <!-- Input Selects for dynamically generating Java loop simulation output -->
+                    <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div>
+                            <label for="sb-loop-type" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Choose Loop Type</label>
+                            <select id="sb-loop-type" onchange="runSandbox()" class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-700 focus:outline-none">
+                                <option value="for">For Loop (i = 1 to max)</option>
+                                <option value="while">While Loop (energy > 0)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label id="label-sb-iterations" for="sb-iterations" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Max Iterations (Loops): 3</label>
+                            <input type="range" id="sb-iterations" min="1" max="10" value="3" oninput="updateSandboxLabel(this.value)" onchange="runSandbox()" class="w-full accent-brand-700" aria-labelledby="label-sb-iterations">
+                        </div>
+
+                        <div>
+                            <label for="sb-custom-output" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Custom Message to Print</label>
+                            <input type="text" id="sb-custom-output" value="Coding is Fun!" oninput="runSandbox()" class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-700 focus:outline-none" placeholder="e.g., Coding is fun!">
+                        </div>
+                    </div>
+
+                    <!-- Sandbox Java Code Display -->
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-xs relative overflow-x-auto shadow-inner">
+                        <span class="absolute top-2 right-2 text-slate-500 font-sans font-bold uppercase text-[10px]">Preview Live Code</span>
+                        <pre id="sandbox-code-preview" class="whitespace-pre-wrap mt-2">
+                        </pre>
+                    </div>
+
+                    <!-- Sandbox Output Console -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-2">Simulated Java Sandbox Console</h4>
+                        <div id="sandbox-console" class="bg-black text-emerald-400 p-4 rounded-xl font-mono text-xs min-h-[100px] border border-slate-800" aria-live="polite">
+                            Console empty. Use settings above.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Academy Summary Certificate -->
+            <div id="certificate-box" class="mt-8 bg-gradient-to-r from-brand-900 to-indigo-950 text-white rounded-3xl p-8 text-center shadow-lg border-t-8 border-amber-500 hidden" aria-live="polite">
+                <span class="text-4xl">🎓</span>
+                <h3 class="text-2xl font-black tracking-tight mt-2 text-amber-400">Congratulations, Java Coder!</h3>
+                <p class="text-sm text-brand-100 max-w-xl mx-auto mt-2">
+                    You have successfully completed the lessons, stepped through memory state simulations, and built functional looping algorithms. You are ready for basic logic applications!
+                </p>
+                <div class="mt-4 inline-block bg-amber-500 text-black px-6 py-2.5 rounded-full font-black text-sm tracking-wide shadow-md">
+                    Java Loop Foundations Certified
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Content with explicit Accessibility compliance notes -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-12" role="contentinfo">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+            <p class="text-sm text-gray-600 font-semibold">
+                Designed to meet strict ADA/WCAG 2.1 accessibility criteria with native screen reader live indicators and keyboard controls.
+            </p>
+            <p class="text-xs text-gray-400 font-mono">
+                Built using semantic HTML5, modern vanilla JS, and high-contrast color values.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Comprehensive Vanilla JavaScript Logic and Core Loops Engine -->
+    <script>
+        // Track completed sub-lessons to dynamically compute global navigation progress bar percentage
+        const progressState = {
+            introQuiz: false,
+            forQuiz: false,
+            forTracer: false,
+            whileQuiz: false,
+            whileTracer: false,
+            dowhileQuiz: false,
+            dowhileTracer: false,
+            puzzleDone: false
+        };
+
+        function updateGlobalProgress() {
+            const keys = Object.keys(progressState);
+            const total = keys.length;
+            const completed = keys.filter(k => progressState[k] === true).length;
+            const percent = Math.round((completed / total) * 100);
+
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercentText = document.getElementById('progress-percent');
+
+            if (progressBar && progressPercentText) {
+                progressBar.style.width = percent + '%';
+                progressBar.setAttribute('aria-valuenow', percent);
+                progressPercentText.innerText = percent + '% Completed';
+            }
+
+            // Reveal certificate completion box if all levels solved
+            if (percent === 100) {
+                const cert = document.getElementById('certificate-box');
+                if (cert) cert.classList.remove('hidden');
+            }
+        }
+
+        // Tab Switching logic with appropriate focus management and screen reader orientation changes
+        function switchTab(targetId) {
+            // Hide all tab content panes
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(panel => {
+                panel.classList.add('hidden');
+                panel.classList.remove('block');
+            });
+
+            // Show selected panel
+            const targetPanel = document.getElementById('panel-' + targetId);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+                targetPanel.classList.add('block');
+            }
+
+            // Update tab attributes
+            const tabs = document.querySelectorAll('[role="tab"]');
+            tabs.forEach(tab => {
+                if (tab.id === 'tab-' + targetId) {
+                    tab.setAttribute('aria-selected', 'true');
+                    tab.classList.add('border-brand-700', 'text-brand-700', 'font-bold');
+                    tab.classList.remove('border-transparent', 'text-gray-600');
+                } else {
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.classList.add('border-transparent', 'text-gray-600');
+                    tab.classList.remove('border-brand-700', 'text-brand-700', 'font-bold');
+                }
+            });
+
+            // Announce module transitions verbally to assistive tech users
+            const names = {
+                intro: "Introduction to loops",
+                for: "For loop module and step tracer simulation",
+                while: "While loop module and logic tracing",
+                dowhile: "Do-while loop module and step-by-step analysis",
+                sandbox: "Interactive Code Builder and customizable sandbox"
+            };
+            announceAccessibility(`Loading ${names[targetId]} section.`);
+        }
+
+        function announceAccessibility(message) {
+            const announcer = document.getElementById('sr-announcer');
+            if (announcer) {
+                announcer.innerText = message;
+            }
+        }
+
+        /* 🎢 Rollercoaster Analogy logic engine */
+        let currentAnalogyStep = 0;
+        function stepAnalogy() {
+            const cart = document.getElementById('analogy-cart');
+            const status = document.getElementById('analogy-status');
+            const lapText = document.getElementById('analogy-lap');
+
+            currentAnalogyStep++;
+            if (currentAnalogyStep === 1) {
+                cart.style.transform = 'translateX(-40px) scale(1.1)';
+                status.innerText = "Status: Riding Lap 1";
+                lapText.innerText = "Laps Completed: 1 / 3";
+                announceAccessibility("Rollercoaster starting. Riding Lap 1 completed.");
+            } else if (currentAnalogyStep === 2) {
+                cart.style.transform = 'translateY(-20px) scale(1.2)';
+                status.innerText = "Status: Riding Lap 2";
+                lapText.innerText = "Laps Completed: 2 / 3";
+                announceAccessibility("Rollercoaster continuing. Lap 2 completed.");
+            } else if (currentAnalogyStep === 3) {
+                cart.style.transform = 'translateX(40px) translateY(0px) scale(1.1)';
+                status.innerText = "Status: Riding Lap 3";
+                lapText.innerText = "Laps Completed: 3 / 3";
+                announceAccessibility("Rollercoaster completing last loop lap. Lap 3 completed.");
+            } else {
+                cart.style.transform = 'translateY(0) scale(1.0)';
+                status.innerText = "Status: Finished Ride!";
+                lapText.innerText = "Laps Completed: 3 / 3 (Ride Stopped)";
+                announceAccessibility("Rollercoaster complete. The loop condition is now FALSE because lap count exceeded 3.");
+            }
+        }
+
+        function resetAnalogy() {
+            currentAnalogyStep = 0;
+            const cart = document.getElementById('analogy-cart');
+            const status = document.getElementById('analogy-status');
+            const lapText = document.getElementById('analogy-lap');
+            
+            cart.style.transform = 'translateX(0px) translateY(0px) scale(1.0)';
+            status.innerText = "Status: Not Started";
+            lapText.innerText = "Laps Completed: 0 / 3";
+            announceAccessibility("Rollercoaster visual state reset to lap 0.");
+        }
+
+        // Introduction Module Quick Check Quiz logic
+        function checkIntroQuiz(isCorrect, element) {
+            const feedback = document.getElementById('intro-quiz-feedback');
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.innerHTML = `<span class="text-success-700 font-bold">🎉 Spot On!</span> You got it. To control a loop and stop it cleanly, Java must trace where it starts, check the validation condition, and increment/update the variable value every lap.`;
+                progressState.introQuiz = true;
+                updateGlobalProgress();
+                announceAccessibility("Correct selection. Spot On!");
+            } else {
+                feedback.innerHTML = `<span class="text-red-700 font-bold font-bold">❌ Try again.</span> Think about what variables control loop actions. How does a computer know we reached a boundary?`;
+                announceAccessibility("Incorrect selection. Try again.");
+            }
+        }
+
+        /* 🔍 MODULE 2: FOR LOOP STEP TRACER ENGINE */
+        const forStates = [
+            { line: 1, i: '-', cond: '-', console: 'Empty', desc: 'Initialize: Set index i to 1.' },
+            { line: 1, i: '1', cond: 'true', console: 'Empty', desc: 'Check test condition: Is 1 <= 3? Yes, it is true! Execute the loop contents.' },
+            { line: 2, i: '1', cond: 'true', console: 'Run: 1', desc: 'Execute Print statement: Output "Run: 1" to the screen console.' },
+            { line: 3, i: '1', cond: 'true', console: 'Run: 1', desc: 'Reached closing bracket. Increment step: i++ increases value from 1 to 2.' },
+            { line: 1, i: '2', cond: 'true', console: 'Run: 1', desc: 'Check test condition again: Is 2 <= 3? True! Run loop again.' },
+            { line: 2, i: '2', cond: 'true', console: 'Run: 1\nRun: 2', desc: 'Execute Print statement: Output "Run: 2" to console.' },
+            { line: 3, i: '2', cond: 'true', console: 'Run: 1\nRun: 2', desc: 'Reached bottom bracket again. Increment step: i++ increases value from 2 to 3.' },
+            { line: 1, i: '3', cond: 'true', console: 'Run: 1\nRun: 2', desc: 'Check condition: Is 3 <= 3? True! Run loop again.' },
+            { line: 2, i: '3', cond: 'true', console: 'Run: 1\nRun: 2\nRun: 3', desc: 'Execute Print: Output "Run: 3" to console.' },
+            { line: 3, i: '3', cond: 'true', console: 'Run: 1\nRun: 2\nRun: 3', desc: 'Increment step: i++ increases value from 3 to 4.' },
+            { line: 1, i: '4', cond: 'false', console: 'Run: 1\nRun: 2\nRun: 3', desc: 'Check condition: Is 4 <= 3? False! Loop stops immediately.' },
+            { line: null, i: '4', cond: 'false', console: 'Run: 1\nRun: 2\nRun: 3', desc: 'Execution Complete! The program continues past the loop closing bracket.' }
+        ];
+        
+        let forStepIndex = -1;
+
+        function stepForLoop() {
+            forStepIndex++;
+            if (forStepIndex >= forStates.length) {
+                forStepIndex = 0; // wrap around
+            }
+            renderForState(forStepIndex);
+        }
+
+        function resetForLoop() {
+            forStepIndex = -1;
+            renderForState(null);
+            announceAccessibility("For step tracer has been reset to starting state.");
+        }
+
+        function renderForState(idx) {
+            // Remove highlighting off all lines
+            for (let i = 1; i <= 3; i++) {
+                const ln = document.getElementById('for-line-' + i);
+                if (ln) ln.className = "px-2 py-0.5 rounded transition-all duration-300";
+            }
+
+            const varI = document.getElementById('var-for-i');
+            const varCond = document.getElementById('var-for-cond');
+            const consoleBox = document.getElementById('for-console');
+
+            if (idx === null || idx === -1) {
+                varI.innerText = '-';
+                varCond.innerText = '-';
+                consoleBox.innerText = 'Console empty. Click "Step Forward" below.';
+                return;
+            }
+
+            const state = forStates[idx];
+            
+            // Highlight current line if execution line is valid
+            if (state.line) {
+                const targetLine = document.getElementById('for-line-' + state.line);
+                if (targetLine) {
+                    targetLine.className = "px-2 py-1 rounded bg-amber-500 text-black font-black transition-all duration-300";
+                }
+            }
+
+            // Update visual state variables
+            varI.innerText = state.i;
+            varCond.innerText = state.cond;
+            consoleBox.innerText = state.console;
+
+            // Mark completion of the interactive tracer
+            if (idx === forStates.length - 1) {
+                progressState.forTracer = true;
+                updateGlobalProgress();
+            }
+
+            // Screen reader announcements
+            announceAccessibility(`Line ${state.line || "completed"}: ${state.desc}. Output reads: ${state.console.replace(/\n/g, ', ')}`);
+        }
+
+        function checkForQuiz(isCorrect, value, btn) {
+            const fdb = document.getElementById('for-quiz-feedback');
+            fdb.classList.remove('hidden');
+            if (isCorrect) {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-emerald-100 text-success-700";
+                fdb.innerHTML = "✅ Perfect! Because loop starts at 0, it runs for values: 0, 1, 2, 3, and 4. That is exactly 5 times total.";
+                progressState.forQuiz = true;
+                updateGlobalProgress();
+            } else {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-700";
+                fdb.innerHTML = `❌ incorrect answer. If you start index at 0, index goes: 0, 1, 2... and ends before 5. Count how many times that is.`;
+            }
+            announceAccessibility(fdb.innerText);
+        }
+
+
+        /* 🔄 MODULE 3: WHILE LOOP STEP TRACER ENGINE */
+        const whileStates = [
+            { line: 1, energy: '3', cond: '-', console: 'Empty', desc: 'Initialize: Set variable energy to 3.' },
+            { line: 2, energy: '3', cond: 'true', console: 'Empty', desc: 'Check loop condition: Is energy (3) > 0? Yes! Run loop code.' },
+            { line: 3, energy: '3', cond: 'true', console: 'Running!', desc: 'Print: Output "Running!" to console.' },
+            { line: 4, energy: '2', cond: 'true', console: 'Running!', desc: 'Decrement step: Decrease energy from 3 to 2.' },
+            { line: 2, energy: '2', cond: 'true', console: 'Running!', desc: 'Check loop condition: Is energy (2) > 0? Yes! Run loop again.' },
+            { line: 3, energy: '2', cond: 'true', console: 'Running!\nRunning!', desc: 'Print: Output another "Running!" to console.' },
+            { line: 4, energy: '1', cond: 'true', console: 'Running!\nRunning!', desc: 'Decrement step: Decrease energy from 2 to 1.' },
+            { line: 2, energy: '1', cond: 'true', console: 'Running!\nRunning!', desc: 'Check loop condition: Is energy (1) > 0? Yes! Run loop again.' },
+            { line: 3, energy: '1', cond: 'true', console: 'Running!\nRunning!\nRunning!', desc: 'Print: Output "Running!" to console again.' },
+            { line: 4, energy: '0', cond: 'true', console: 'Running!\nRunning!\nRunning!', desc: 'Decrement step: Decrease energy from 1 to 0.' },
+            { line: 2, energy: '0', cond: 'false', console: 'Running!\nRunning!\nRunning!', desc: 'Check loop condition: Is energy (0) > 0? False! Stop loop immediately.' },
+            { line: null, energy: '0', cond: 'false', console: 'Running!\nRunning!\nRunning!', desc: 'Complete! Execution continues below loop brackets.' }
+        ];
+
+        let whileStepIndex = -1;
+
+        function stepWhileLoop() {
+            whileStepIndex++;
+            if (whileStepIndex >= whileStates.length) {
+                whileStepIndex = 0; // wrap
+            }
+            renderWhileState(whileStepIndex);
+        }
+
+        function resetWhileLoop() {
+            whileStepIndex = -1;
+            renderWhileState(null);
+            announceAccessibility("While loop step tracer has been reset.");
+        }
+
+        function renderWhileState(idx) {
+            for (let i = 1; i <= 5; i++) {
+                const ln = document.getElementById('while-line-' + i);
+                if (ln) ln.className = "px-2 py-0.5 rounded transition-all duration-300";
+            }
+
+            const varEnergy = document.getElementById('var-while-energy');
+            const varCond = document.getElementById('var-while-cond');
+            const consoleBox = document.getElementById('while-console');
+
+            if (idx === null || idx === -1) {
+                varEnergy.innerText = '-';
+                varCond.innerText = '-';
+                consoleBox.innerText = 'Console empty. Click "Step Forward" below.';
+                return;
+            }
+
+            const state = whileStates[idx];
+            if (state.line) {
+                const targetLine = document.getElementById('while-line-' + state.line);
+                if (targetLine) {
+                    targetLine.className = "px-2 py-1 rounded bg-amber-500 text-black font-black transition-all duration-300";
+                }
+            }
+
+            varEnergy.innerText = state.energy;
+            varCond.innerText = state.cond;
+            consoleBox.innerText = state.console;
+
+            if (idx === whileStates.length - 1) {
+                progressState.whileTracer = true;
+                updateGlobalProgress();
+            }
+
+            announceAccessibility(`Line ${state.line || "completed"}: ${state.desc}. Output reads: ${state.console.replace(/\n/g, ', ')}`);
+        }
+
+        function checkWhileQuiz(isCorrect, btn) {
+            const fdb = document.getElementById('while-quiz-feedback');
+            fdb.classList.remove('hidden');
+            if (isCorrect) {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-emerald-100 text-success-700";
+                fdb.innerHTML = "✅ That's absolutely correct! An infinite loop continues forever, hogging CPU cycles and locking up the system because the condition is never false.";
+                progressState.whileQuiz = true;
+                updateGlobalProgress();
+            } else {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-700";
+                fdb.innerHTML = "❌ Try again. Java will not stop or ask for boundaries unless you code them explicitly.";
+            }
+            announceAccessibility(fdb.innerText);
+        }
+
+
+        /* ↩️ MODULE 4: DO-WHILE LOOP STEP TRACER ENGINE */
+        const dowhileStates = [
+            { line: 1, attempts: '0', cond: '-', console: 'Empty', desc: 'Initialize: Set variable attempts to 0.' },
+            { line: 2, attempts: '0', cond: '-', console: 'Empty', desc: 'The DO Block starts. Notice there is no condition check here! Enter loop unconditionally.' },
+            { line: 3, attempts: '0', cond: '-', console: 'Guaranteed Print!', desc: 'Print: Output "Guaranteed Print!" directly to the console output.' },
+            { line: 4, attempts: '1', cond: '-', console: 'Guaranteed Print!', desc: 'Increment: Increase attempts variable from 0 to 1.' },
+            { line: 5, attempts: '1', cond: 'false', console: 'Guaranteed Print!', desc: 'The Condition Check: Is attempts (1) < 0? No! That is false. The loop stops.' },
+            { line: null, attempts: '1', cond: 'false', console: 'Guaranteed Print!', desc: 'Complete! Even though the condition was immediately false, the loop ran 1 time!' }
+        ];
+
+        let dowhileStepIndex = -1;
+
+        function stepDoWhileLoop() {
+            dowhileStepIndex++;
+            if (dowhileStepIndex >= dowhileStates.length) {
+                dowhileStepIndex = 0; // wrap
+            }
+            renderDoWhileState(dowhileStepIndex);
+        }
+
+        function resetDoWhileLoop() {
+            dowhileStepIndex = -1;
+            renderDoWhileState(null);
+            announceAccessibility("Do-while loop step tracer has been reset.");
+        }
+
+        function renderDoWhileState(idx) {
+            for (let i = 1; i <= 5; i++) {
+                const ln = document.getElementById('dowhile-line-' + i);
+                if (ln) ln.className = "px-2 py-0.5 rounded transition-all duration-300";
+            }
+
+            const varAttempts = document.getElementById('var-dowhile-attempts');
+            const varCond = document.getElementById('var-dowhile-cond');
+            const consoleBox = document.getElementById('dowhile-console');
+
+            if (idx === null || idx === -1) {
+                varAttempts.innerText = '-';
+                varCond.innerText = '-';
+                consoleBox.innerText = 'Console empty. Click "Step Forward" below.';
+                return;
+            }
+
+            const state = dowhileStates[idx];
+            if (state.line) {
+                const targetLine = document.getElementById('dowhile-line-' + state.line);
+                if (targetLine) {
+                    targetLine.className = "px-2 py-1 rounded bg-amber-500 text-black font-black transition-all duration-300";
+                }
+            }
+
+            varAttempts.innerText = state.attempts;
+            varCond.innerText = state.cond;
+            consoleBox.innerText = state.console;
+
+            if (idx === dowhileStates.length - 1) {
+                progressState.dowhileTracer = true;
+                updateGlobalProgress();
+            }
+
+            announceAccessibility(`Line ${state.line || "completed"}: ${state.desc}. Output is: ${state.console}`);
+        }
+
+        function checkDoWhileQuiz(isCorrect, btn) {
+            const fdb = document.getElementById('dowhile-quiz-feedback');
+            fdb.classList.remove('hidden');
+            if (isCorrect) {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-emerald-100 text-success-700";
+                fdb.innerHTML = "✅ Perfect explanation! A do-while checks the loop expression only AFTER executing the contents. So we get at least one run unconditionally.";
+                progressState.dowhileQuiz = true;
+                updateGlobalProgress();
+            } else {
+                fdb.className = "mt-4 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-700";
+                fdb.innerHTML = "❌ Try again. Compare where the test condition sits structurally compared to standard loops.";
+            }
+            announceAccessibility(fdb.innerText);
+        }
+
+
+        /* 🧩 MODULE 5: ACCESSIBLE BLOCK PUZZLE ENGINE */
+        // We will maintain blocks dynamically in memory and offer simple highly-accessible "Up/Down" buttons
+        let puzzleBlocks = [
+            { id: 'b3', text: 'i += 2) {', order: 2 },
+            { id: 'b5', text: '}', order: 5 },
+            { id: 'b4', text: '    System.out.print(i + " ");', order: 4 },
+            { id: 'b2', text: 'i <= 5;', order: 1 },
+            { id: 'b1', text: 'for (int i = 1;', order: 0 }
+        ];
+
+        // Shuffle code blocks on launch
+        function shufflePuzzle() {
+            puzzleBlocks.sort(() => Math.random() - 0.5);
+        }
+
+        function renderPuzzle() {
+            const container = document.getElementById('puzzle-container');
+            container.innerHTML = '';
+
+            puzzleBlocks.forEach((block, index) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-white p-3 rounded-lg border-2 border-gray-200 shadow-sm transition-all focus-within:border-amber-500";
+                item.setAttribute('role', 'listitem');
+                
+                // Content of current code line
+                const codeSpan = document.createElement('span');
+                codeSpan.className = "font-mono text-sm text-gray-800 select-all whitespace-pre";
+                codeSpan.innerText = block.text;
+
+                // Accessible move up and move down trigger buttons
+                const btnGroup = document.createElement('div');
+                btnGroup.className = "flex gap-1";
+
+                const btnUp = document.createElement('button');
+                btnUp.className = "bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-700 p-1.5 rounded focus:ring-2 focus:ring-amber-500";
+                btnUp.innerHTML = "▲ Move Up";
+                btnUp.setAttribute('aria-label', `Move ${block.text} block up`);
+                btnUp.onclick = () => moveBlock(index, -1);
+
+                const btnDown = document.createElement('button');
+                btnDown.className = "bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-700 p-1.5 rounded focus:ring-2 focus:ring-amber-500";
+                btnDown.innerHTML = "▼ Move Down";
+                btnDown.setAttribute('aria-label', `Move ${block.text} block down`);
+                btnDown.onclick = () => moveBlock(index, 1);
+
+                // Disable border elements
+                if (index === 0) {
+                    btnUp.disabled = true;
+                    btnUp.className += " opacity-30 cursor-not-allowed";
+                }
+                if (index === puzzleBlocks.length - 1) {
+                    btnDown.disabled = true;
+                    btnDown.className += " opacity-30 cursor-not-allowed";
+                }
+
+                btnGroup.appendChild(btnUp);
+                btnGroup.appendChild(btnDown);
+
+                item.appendChild(codeSpan);
+                item.appendChild(btnGroup);
+                container.appendChild(item);
+            });
+        }
+
+        function moveBlock(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= puzzleBlocks.length) return;
+
+            // Swap positions
+            const temp = puzzleBlocks[index];
+            puzzleBlocks[index] = puzzleBlocks[targetIndex];
+            puzzleBlocks[targetIndex] = temp;
+
+            renderPuzzle();
+            
+            // Inform screen readers of changed layout structure
+            announceAccessibility(`Moved line "${temp.text}" to line position ${targetIndex + 1}.`);
+        }
+
+        function checkPuzzle() {
+            // Correct semantic sequence of orders: b1 -> b2 -> b3 -> b4 -> b5
+            // IDs sequence must be b1, b2, b3, b4, b5
+            const expectedIds = ['b1', 'b2', 'b3', 'b4', 'b5'];
+            let correct = true;
+
+            for (let i = 0; i < expectedIds.length; i++) {
+                if (puzzleBlocks[i].id !== expectedIds[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            const feedback = document.getElementById('puzzle-feedback');
+            feedback.classList.remove('hidden');
+
+            if (correct) {
+                feedback.className = "p-4 rounded-xl text
